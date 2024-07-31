@@ -1,72 +1,71 @@
 class Sensor {
   constructor(car) {
     this.car = car;
-    this.rayCount = 5;
-    this.rayLength = 150;
-    this.raySpread = Math.PI / 2;
+    this.numberOfRays = 5;
+    this.LengthOfRay = 150;
+    this.raySpread = Math.PI/ 2;
 
     this.rays = [];
     this.readings = [];
   }
 
   update(roadBorders) {
-    this.#castRays();
+    this.#createSensorRays();
     this.readings = [];
-    for (let i = 0; i < this.rays.length; i++) {
+    for(let i = 0; i < this.rays.length; i++){
       this.readings.push(this.#getReading(this.rays[i], roadBorders));
     }
   }
 
-  #getReading(ray, roadBorders) {
-    let touches = [];
-
-    for (let i = 0; i < roadBorders.length; i++) {
-      const touch = getIntersection(
-        ray[0],
-        ray[1],
-        roadBorders[i][0],
-        roadBorders[i][1]
-      );
-      if (touch) {
-        touches.push(touch);
+  #getReading(ray, roadBorders){
+    let intersections = [];
+    for(let i = 0; i < roadBorders.length; i++){
+      const intersect = getIntersection(ray[0], ray[1], roadBorders[i][0], roadBorders[i][1]);
+      if(intersect){
+        intersections.push(intersect);
       }
     }
 
-    if (touches.length == 0) {
+    if (intersections.length == 0) {
       return null;
-    } else {
-      const offsets = touches.map((e) => e.offset);
+    }
+    else{
+      const offsets = intersections.map(intersection => intersection.offset);
       const minOffset = Math.min(...offsets);
-      return touches.find((e) => e.offset == minOffset);
+      return intersections.find(intersection => intersection.offset == minOffset);
     }
   }
 
-  #castRays() {
+  #createSensorRays(){
     this.rays = [];
-    for (let i = 0; i < this.rayCount; i++) {
+    for (let i = 0; i < this.numberOfRays; i++) {
       const rayAngle =
         lerp(
           this.raySpread / 2,
           -this.raySpread / 2,
-          this.rayCount == 1 ? 0.5 : i / (this.rayCount - 1)
+          this.numberOfRays == 1 ? 0.5 : i / (this.numberOfRays - 1)
         ) + this.car.angle;
 
-      const start = { x: this.car.x, y: this.car.y };
+      const start = {
+        x: this.car.x,
+        y: this.car.y,
+      };
       const end = {
-        x: this.car.x - Math.sin(rayAngle) * this.rayLength,
-        y: this.car.y - Math.cos(rayAngle) * this.rayLength,
+        x: this.car.x - Math.sin(rayAngle) * this.LengthOfRay,
+        y: this.car.y - Math.cos(rayAngle) * this.LengthOfRay,
       };
       this.rays.push([start, end]);
     }
   }
 
+
+
   draw(ctx) {
-    for (let i = 0; i < this.rayCount; i++) {
+    for (let i = 0; i < this.numberOfRays; i++) {
       let end = this.rays[i][1];
       if (this.readings[i]) {
         end = this.readings[i];
       }
-
       ctx.beginPath();
       ctx.lineWidth = 2;
       ctx.strokeStyle = "yellow";

@@ -49,10 +49,10 @@ class Road {
     }
 
     ctx.setLineDash([]); // Solid line
-    this.borders.forEach((borders) => {
+    this.borders.forEach((border) => {
       ctx.beginPath();
-      ctx.moveTo(borders[0].x, borders[0].y);
-      ctx.lineTo(borders[1].x, borders[1].y);
+      ctx.moveTo(border[0].x, border[0].y);
+      ctx.lineTo(border[1].x, border[1].y);
       ctx.stroke();
     });
   }

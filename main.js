@@ -24,9 +24,9 @@ animate();
 
 function animate(){
   canvas.height = window.innerHeight; // to remove the trail of the car
-  car.update();
+  car.update(road.borders);
   ctx.save();
-  ctx.translate(0, -car.y + canvas.height * 0.5);
+  ctx.translate(0, -car.y + canvas.height * 0.7);
   road.draw(ctx);
   car.draw(ctx);
   ctx.restore();
