@@ -1,80 +1,58 @@
 class Road {
-  constructor(x, width, laneCount = 3) {
-    this.x = x;
+  constructor(centerX, width, numberOfLanes = 3) {
+    this.centerX = centerX;
     this.width = width;
-    this.laneCount = laneCount;
+    this.numberOfLanes = numberOfLanes;
 
-    this.left = x - width / 2;
-    this.right = x + width / 2;
-
-    const infinity = 1000000;
+    // The road is an infinite rectangle, so we need to define its boundaries
+    // in order to know when to draw it.
+    // We will use these boundaries to draw the road and to check if the car is
+    // inside the road.
+    const infinity = 100000000;
+    this.left = centerX - width / 2;
+    this.right = centerX + width / 2;
     this.top = -infinity;
     this.bottom = infinity;
 
-    this.borders = this.createBorders();
-  }
-
-  // Method to create road borders
-  createBorders() {
-    return [
-      {
-        start: { x: this.left, y: this.top },
-        end: { x: this.left, y: this.bottom },
-      },
-      {
-        start: { x: this.right, y: this.top },
-        end: { x: this.right, y: this.bottom },
-      },
+    // using these boundaries to check if the car is inside the road.
+    const topLeft = { x: this.left, y: this.top };
+    const topRight = { x: this.right, y: this.top };
+    const bottomLeft = { x: this.left, y: this.bottom };
+    const bottomRight = { x: this.right, y: this.bottom };
+    this.borders = [
+      [topLeft, bottomLeft],
+      [topRight, bottomRight],
     ];
   }
 
-  // Method to calculate the center of a lane given the lane index
+  // This method returns the center of a lane given its index.
   getLaneCenter(laneIndex) {
-    if (laneIndex < 0 || laneIndex >= this.laneCount) {
-      throw new Error("Invalid lane index");
-    }
-    const laneWidth = this.width / this.laneCount;
-    return this.left + laneWidth / 2 + laneIndex * laneWidth;
+    const laneWidth = this.width / this.numberOfLanes;
+    return (
+      this.left +
+      laneWidth / 2 +
+      Math.min(laneIndex, this.numberOfLanes - 1) * laneWidth
+    );
   }
 
-  // Method to draw the road on the canvas
   draw(ctx) {
-    this.drawLaneLines(ctx);
-    this.drawBorders(ctx);
-  }
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "white";
 
-  // Method to draw lane lines
-  drawLaneLines(ctx) {
-    const laneDashPattern = [20, 20];
-    const borderWidth = 5;
-    const borderColor = "white";
-
-    ctx.lineWidth = borderWidth;
-    ctx.strokeStyle = borderColor;
-    ctx.setLineDash(laneDashPattern);
-
-    for (let i = 1; i < this.laneCount; i++) {
-      const x = lerp(this.left, this.right, i / this.laneCount);
+    // Draw lanes
+    for (let i = 1; i <= this.numberOfLanes - 1; i++) {
+      const x = lerp(this.left, this.right, i / this.numberOfLanes);
       ctx.beginPath();
       ctx.moveTo(x, this.top);
       ctx.lineTo(x, this.bottom);
       ctx.stroke();
     }
-  }
 
-  // Method to draw road borders
-  drawBorders(ctx) {
-    const borderWidth = 5;
-    const borderColor = "white";
-
-    ctx.lineWidth = borderWidth;
-    ctx.strokeStyle = borderColor;
-    ctx.setLineDash([]);
-
-    this.borders.forEach(({ start, end }) => {
+    ctx.setLineDash([]); // Solid line
+    this.borders.forEach((borders) => {
       ctx.beginPath();
-      ctx.moveTo(start.x, start.y);
-      ctx.lineTo(end.x, end.y);
+      ctx.moveTo(borders[0].x, borders[0].y);
+      ctx.lineTo(borders[1].x, borders[1].y);
       ctx.stroke();
     });
   }
