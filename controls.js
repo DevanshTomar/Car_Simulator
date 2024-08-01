@@ -1,5 +1,5 @@
 class Controls{
-  constructor(){
+  constructor(type){
     // attributes to control the car
     this.forward = false;
     this.backward = false;
@@ -7,7 +7,14 @@ class Controls{
     this.right = false;
 
     // event listeners
-    this.#keyboardInstructions();
+    switch(type){
+      case 'KEYS':
+        this.#keyboardInstructions();
+        break;
+      case 'DUMMY':
+        this.forward = true;
+        break;
+    }
   }
 
   #keyboardInstructions(){
