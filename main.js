@@ -7,11 +7,15 @@ visualCanvas.width = 400;
 const carCtx = carCanvas.getContext("2d");
 const visualCtx = visualCanvas.getContext("2d");
 
-const numberOfLanes = 5;
+const numberOfLanes = 4;
 
-const road = new Road(carCanvas.width / 2, carCanvas.width * 0.9, numberOfLanes);
+const road = new Road(
+  carCanvas.width / 2,
+  carCanvas.width * 0.9,
+  numberOfLanes
+);
 
-const N = 500;
+const N = 1000;
 const cars = generateCars(N);
 let bestCar = cars[0];
 
@@ -25,12 +29,17 @@ if (localStorage.getItem("bestBrain")) {
 }
 
 // Initialize traffic
-const traffic = [];
-for (let i = 0; i < 50; i++) {
-  let lane = Math.floor(Math.random() * numberOfLanes); // random lane between 0 and 2
-  let y = -100 * (i + 1) + 1; // progressively decrease y value
-  traffic.push(new Car(road.getLaneCenter(lane), y, 30, 50, "DUMMY", 2));
-}
+let traffic = [];
+fetch("traffic.json")
+  .then((response) => response.json())
+  .then((data) => {
+    traffic = data.map(
+      (carData) =>
+        new Car(road.getLaneCenter(carData.lane), carData.y, 30, 50, "DUMMY", 2)
+    );
+    animate(traffic);
+  })
+  .catch((error) => console.error("Error loading traffic data:", error));
 
 animate();
 
@@ -89,10 +98,6 @@ function animate(time) {
   visualCtx.lineDashOffset = -time / 50;
   Visualizer.drawNetwork(visualCtx, bestCar.brain);
 
-  // Check if the best car has passed all the traffic
-  if (bestCar.y < Math.min(...traffic.map((car) => car.y))) {
-    save();
-  }
 
   if (bestCar.damaged) {
     console.log("Car is damaged");
