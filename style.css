@@ -30,3 +30,30 @@ button:hover{
 #visualCanvas{
     background: black;
 }
+
+#instructions {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #f0f0f0; /* Light grey background */
+    padding: 15px; /* Increased padding for better spacing */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow */
+    margin: 10px; /* Margin around the instructions */
+    max-width: 200px; /* Limit the width to prevent overflow */
+}
+
+#instructions h2 {
+    margin-top: 0;
+    margin-bottom: 10px; /* Space between heading and list */
+}
+
+#instructions ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0; /* Remove default margin */
+}
+
+#instructions li {
+    margin-bottom: 8px; /* Space between list items */
+}

@@ -7,10 +7,19 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div id="instructions">
+        <h2>Instructions</h2>
+        <ul>
+            <li>Save your progress with the 💾 button.</li>
+            <li>Discard changes with the 🗑️ button.</li>
+            <li>Press the 🔄 button to refresh the page and reload the car.</li> 
+        </ul>
+    </div>
     <canvas id="carCanvas"></canvas>
     <div id="vertical_buttons">
-        <button onclick="save()">💾</button>
-        <button onclick="discard()">🗑️</button>
+        <button onclick="save()">💾 Save</button>
+        <button onclick="discard()">🗑️ Discard</button>
+        <button onclick="reloadCar()">🔄 Restart</button>
     </div>
     <canvas id="visualCanvas"></canvas>
     <script src="visualizer.js"></script>
